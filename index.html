@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>新加坡~馬爾地夫~吉隆坡 蜜月之旅</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Config & Styles -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'island-blue': '#0077b6', 
+                        'island-light': '#e0f2fe',
+                        'sand-gold': '#d4a373',
+                        'coral-pink': '#e63946', 
+                        'palm-green': '#2a9d8f', 
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                        serif: ['"Noto Serif TC"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content.active { display: block; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .custom-checkbox:checked + label span { background-color: #0077b6; border-color: #0077b6; }
+        .custom-checkbox:checked + label span:after { content: '\2714'; display: block; color: white; font-size: 12px; text-align: center; line-height: 20px; }
+        
+        .route-link { color: #2563eb; text-decoration: none; border-bottom: 1px dotted #2563eb; }
+        .route-link:hover { color: #1e40af; border-bottom: 1px solid #1e40af; }
+
+        .expense-table th { background-color: #f3f4f6; color: #374151; font-weight: 600; padding: 8px 4px; font-size: 0.75rem; text-align: center; }
+        .expense-table td { padding: 8px 4px; border-bottom: 1px solid #e5e7eb; font-size: 0.8rem; vertical-align: middle; text-align: center; }
+        .expense-table tr:last-child td { border-bottom: none; }
+    </style>
+</head>
+<body class="bg-gray-200 font-sans text-gray-700 overflow-hidden h-screen w-screen flex justify-center">
+
+    <div class="w-full max-w-md h-full bg-white shadow-2xl relative flex flex-col overflow-hidden">
+        
+        <!-- Header -->
+        <header class="bg-island-blue text-white p-4 shadow-md z-10 shrink-0">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="font-serif text-xl font-bold tracking-wide"><i class="fa-solid fa-plane-departure mr-2"></i>蜜月之旅</h1>
+                    <p class="text-xs text-blue-100 mt-1">Jan 23 - Feb 03 • 2025</p>
+                </div>
+                <div class="text-right">
+                    <i class="fa-solid fa-umbrella-beach text-2xl opacity-80"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto hide-scrollbar bg-slate-50 pb-20 relative" id="main-content">
+            
+            <!-- Tab 1: 行程表 (Plan) -->
+            <div id="tab-plan" class="tab-content active p-4">
+                <div class="text-center mb-6">
+                    <h2 class="font-serif text-2xl text-island-blue font-bold">每日行程</h2>
+                    <div class="h-1 w-16 bg-sand-gold mx-auto mt-2 rounded-full"></div>
+                </div>
+                <div id="itinerary-container" class="space-y-4"></div>
+            </div>
+
+            <!-- Tab 2: 記帳與匯率 (Wallet) -->
+            <div id="tab-wallet" class="tab-content p-4">
+                <div class="text-center mb-4">
+                    <h2 class="font-serif text-2xl text-coral-pink font-bold">記帳管家</h2>
+                    <div class="h-1 w-16 bg-sand-gold mx-auto mt-2 rounded-full"></div>
+                </div>
+                <!-- Rate Calculator -->
+                <div class="bg-white rounded-xl shadow-sm p-4 mb-4 border border-gray-100">
+                    <div class="flex justify-between items-center mb-2 cursor-pointer" onclick="document.getElementById('calc-body').classList.toggle('hidden')">
+                        <h3 class="font-bold text-gray-800"><i class="fa-solid fa-calculator text-island-blue mr-2"></i>簡易匯率換算</h3>
+                        <i class="fa-solid fa-chevron-down text-gray-400"></i>
+                    </div>
+                    <div id="calc-body" class="hidden">
+                        <div class="flex gap-2 items-center mb-2">
+                            <label class="text-xs text-gray-600 font-bold">匯率:</label>
+                            <input type="number" id="exchange-rate" class="border rounded px-2 py-1 w-20 text-center text-sm" value="4.5" onchange="saveRate()">
+                        </div>
+                        <div class="flex gap-2 items-center">
+                            <input type="number" id="calc-input" placeholder="外幣" class="flex-1 bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-island-blue">
+                            <i class="fa-solid fa-arrow-right text-gray-400 text-sm"></i>
+                            <div id="calc-result" class="flex-1 bg-island-light text-island-blue font-bold text-sm px-3 py-2 rounded-lg text-right">0</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Add Expense Form -->
+                <div class="bg-white rounded-xl shadow-sm p-4 mb-6 border border-gray-100 relative">
+                    <h3 class="font-bold text-gray-800 mb-3"><i class="fa-solid fa-pen-to-square text-coral-pink mr-2"></i>新增/編輯一筆</h3>
+                    <div class="grid gap-3">
+                        <div class="flex bg-gray-100 rounded-lg p-1">
+                            <label class="flex-1 text-center cursor-pointer">
+                                <input type="radio" name="payer" value="俊安" class="hidden peer" checked>
+                                <span class="block py-1.5 text-sm rounded-md text-gray-500 peer-checked:bg-blue-500 peer-checked:text-white transition">俊安付</span>
+                            </label>
+                            <label class="flex-1 text-center cursor-pointer">
+                                <input type="radio" name="payer" value="毓芸" class="hidden peer">
+                                <span class="block py-1.5 text-sm rounded-md text-gray-500 peer-checked:bg-pink-500 peer-checked:text-white transition">毓芸付</span>
+                            </label>
+                        </div>
+                        
+                        <!-- 付款方式 -->
+                        <div class="flex bg-gray-100 rounded-lg p-1">
+                            <label class="flex-1 text-center cursor-pointer">
+                                <input type="radio" name="paymentMethod" value="信用卡" class="hidden peer" checked>
+                                <span class="block py-1.5 text-sm rounded-md text-gray-500 peer-checked:bg-slate-700 peer-checked:text-white transition"><i class="fa-regular fa-credit-card mr-1"></i>信用卡</span>
+                            </label>
+                            <label class="flex-1 text-center cursor-pointer">
+                                <input type="radio" name="paymentMethod" value="現金" class="hidden peer">
+                                <span class="block py-1.5 text-sm rounded-md text-gray-500 peer-checked:bg-orange-500 peer-checked:text-white transition"><i class="fa-solid fa-money-bill-1 mr-1"></i>現金</span>
+                            </label>
+                            <label class="flex-1 text-center cursor-pointer">
+                                <input type="radio" name="paymentMethod" value="爸媽現金" class="hidden peer">
+                                <span class="block py-1.5 text-sm rounded-md text-gray-500 peer-checked:bg-purple-500 peer-checked:text-white transition"><i class="fa-solid fa-hand-holding-dollar mr-1"></i>爸媽現金</span>
+                            </label>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <select id="expense-currency" class="w-1/3 border rounded-lg px-2 py-2 text-sm bg-white">
+                                <option value="TWD">TWD 台幣</option>
+                                <option value="SGD">SGD 新幣</option>
+                                <option value="MYR">MYR 馬幣</option>
+                                <option value="MVR">MVR 馬爾地夫</option>
+                                <option value="USD">USD 美金</option>
+                            </select>
+                            <input type="number" id="expense-amount" placeholder="金額" class="flex-1 border rounded-lg px-3 py-2">
+                        </div>
+                        <input type="text" id="expense-item" placeholder="項目 (如: 晚餐、Grab)" class="w-full border rounded-lg px-3 py-2">
+                        <div class="flex gap-2">
+                            <select id="expense-cat" class="flex-1 border rounded-lg px-2 py-2 text-sm bg-white">
+                                <option value="交通">交通</option>
+                                <option value="餐飲">餐飲</option>
+                                <option value="購物">購物</option>
+                                <option value="娛樂">娛樂</option>
+                                <option value="住宿">住宿</option>
+                                <option value="其他">其他</option>
+                            </select>
+                            <label class="flex items-center justify-center bg-gray-100 text-gray-500 rounded-lg px-3 py-2 cursor-pointer hover:bg-gray-200 w-12 border">
+                                <i class="fa-solid fa-camera"></i>
+                                <input type="file" id="expense-img" accept="image/*" class="hidden">
+                            </label>
+                        </div>
+                        <div id="img-preview-area" class="hidden">
+                            <img id="img-preview" src="" class="h-16 w-auto rounded border">
+                            <button onclick="clearImage()" class="text-xs text-red-500 ml-2">移除</button>
+                        </div>
+                        <div class="flex gap-2">
+                            <button id="add-expense-btn" onclick="addExpense()" class="flex-1 bg-coral-pink text-white font-bold py-2 rounded-lg hover:bg-red-500 transition shadow-md">記帳並同步至報表</button>
+                            <button id="cancel-edit-btn" onclick="cancelEdit()" class="hidden w-20 bg-gray-300 text-gray-700 font-bold py-2 rounded-lg hover:bg-gray-400 transition shadow-md">取消</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Expense History -->
+                <div>
+                    <div class="flex justify-between items-end mb-2">
+                        <h3 class="font-bold text-gray-800">最近記帳</h3>
+                        <button onclick="switchTab('summary')" class="text-xs text-blue-500 underline">查看完整報表</button>
+                    </div>
+                    <ul id="expense-list" class="space-y-2 pb-10"></ul>
+                </div>
+            </div>
+
+            <!-- Tab 3: 支出彙整表 (Summary) -->
+            <div id="tab-summary" class="tab-content p-4">
+                <div class="text-center mb-6">
+                    <h2 class="font-serif text-2xl text-palm-green font-bold">支出彙整表</h2>
+                    <div class="h-1 w-16 bg-sand-gold mx-auto mt-2 rounded-full"></div>
+                </div>
+
+                <!-- 新增：現金錢包區塊 -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-4">
+                    <div class="p-3 bg-orange-50 border-b border-orange-100 flex justify-between items-center">
+                        <h3 class="font-bold text-orange-700"><i class="fa-solid fa-wallet mr-2"></i>現金錢包 (餘額)</h3>
+                    </div>
+                    <div class="grid grid-cols-3 divide-x divide-gray-100 p-3 border-b border-gray-100">
+                        <div class="text-center">
+                            <div class="text-[10px] text-gray-500 mb-1">美金 USD</div>
+                            <div id="wallet-usd" class="font-mono font-bold text-gray-800">150</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-[10px] text-gray-500 mb-1">新幣 SGD</div>
+                            <div id="wallet-sgd" class="font-mono font-bold text-gray-800">200</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-[10px] text-gray-500 mb-1">馬幣 MYR</div>
+                            <div id="wallet-myr" class="font-mono font-bold text-gray-800">600</div>
+                        </div>
+                    </div>
+                    <!-- 爸媽贊助區塊 -->
+                    <div class="p-3 bg-purple-50 flex justify-between items-center">
+                        <div class="flex items-center text-purple-700">
+                            <i class="fa-solid fa-hand-holding-heart mr-2"></i>
+                            <span class="text-xs font-bold">爸媽贊助 (USD)</span>
+                        </div>
+                        <div id="wallet-parents-usd" class="font-mono font-bold text-purple-700 text-lg">2000</div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-4">
+                    <div class="p-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-700"><i class="fa-solid fa-file-invoice-dollar mr-2"></i>預算與墊付總覽</h3>
+                        <span class="text-xs text-gray-400">單位: TWD</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full expense-table">
+                            <thead>
+                                <tr>
+                                    <th class="w-[40%]">項目</th>
+                                    <th class="w-[30%]">俊安</th>
+                                    <th class="w-[30%]">毓芸</th>
+                                </tr>
+                            </thead>
+                            <tbody id="summary-table-body"></tbody>
+                            <tfoot class="bg-gray-100 font-bold">
+                                <tr>
+                                    <td class="p-2 text-center">總計</td>
+                                    <td class="p-2 text-center text-blue-600 whitespace-nowrap" id="total-junan">0</td>
+                                    <td class="p-2 text-center text-pink-600 whitespace-nowrap" id="total-yuyun">0</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-4">
+                    <h3 class="font-bold text-gray-700 mb-2">結算 (均分制)</h3>
+                    <div class="flex justify-between items-center bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+                        <div>
+                            <div class="text-xs text-gray-500">總支出</div>
+                            <div class="font-bold text-lg" id="total-all">0</div>
+                        </div>
+                        <div class="text-right">
+                            <div id="settlement-msg" class="text-sm font-bold text-gray-700">計算中...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: 旅遊清單 (Lists) -->
+            <div id="tab-lists" class="tab-content p-4">
+                <div class="text-center mb-6">
+                    <h2 class="font-serif text-2xl text-purple-600 font-bold">行前與備忘</h2>
+                    <div class="h-1 w-16 bg-sand-gold mx-auto mt-2 rounded-full"></div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+                    <div class="p-3 bg-purple-50 border-b border-purple-100">
+                        <h3 class="font-bold text-purple-700"><i class="fa-solid fa-suitcase mr-2"></i>行李清單</h3>
+                    </div>
+                    <div id="checklist-container" class="divide-y divide-gray-100"></div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 h-full">
+                    <h3 class="font-bold text-gray-800 mb-3 border-b pb-2"><i class="fa-regular fa-note-sticky text-yellow-600 mr-2"></i>備忘錄 (自動儲存)</h3>
+                    <textarea id="memo-area" class="w-full h-40 p-3 bg-yellow-50 rounded-lg border border-yellow-200 text-sm focus:outline-none resize-none text-gray-700" placeholder="輸入備忘事項或網址..."></textarea>
+                    <div id="memo-links" class="mt-2 space-y-1 text-sm"></div>
+                </div>
+            </div>
+
+            <!-- Tab 5: 實用資訊 (Info) -->
+            <div id="tab-info" class="tab-content p-4">
+                <div class="text-center mb-6">
+                    <h2 class="font-serif text-2xl text-blue-700 font-bold">實用資訊</h2>
+                    <div class="h-1 w-16 bg-sand-gold mx-auto mt-2 rounded-full"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <a href="https://weather.com/zh-HK/weather/today/l/bfbafb71cea3672231349f36b198478ecc3d5fd524d0918b8051ee838f743675" target="_blank" class="bg-white p-4 rounded-xl shadow-sm text-center border hover:bg-gray-50">
+                        <i class="fa-solid fa-cloud-sun-rain text-3xl text-island-blue mb-2"></i>
+                        <div class="font-bold text-sm text-gray-700">新加坡天氣</div>
+                    </a>
+                    <a href="https://weather.com/zh-TW/weather/today/l/Mal%C3%A9+Maldives?placeId=f4d8ca65f3c48dfa3e7c1344d25acbbe716a88e0ae57dfd9b2c5c7c8955b16be" target="_blank" class="bg-white p-4 rounded-xl shadow-sm text-center border hover:bg-gray-50">
+                        <i class="fa-solid fa-water text-3xl text-cyan-600 mb-2"></i>
+                        <div class="font-bold text-sm text-gray-700">馬爾地夫天氣</div>
+                    </a>
+                    <a href="https://www.msn.com/zh-tw/weather/forecast/in-%E5%90%89%E9%9A%86%E5%9D%A1,%E9%A6%AC%E4%BE%86%E8%A5%BF%E4%BA%9E?loc=eyJsIjoi5ZCJ6ZqG5Z2hIiwiciI6IuWQiemahuWdoSIsImMiOiLppqzkvobopb%2Fkup4iLCJpIjoiTVkiLCJ0IjoxMDIsImciOiJ6aC10dyIsIngiOiIxMDEuNjU1IiwieSI6IjMuMTQ3MiJ9&weadegreetype=C" target="_blank" class="bg-white p-4 rounded-xl shadow-sm text-center border hover:bg-gray-50">
+                        <i class="fa-solid fa-sun text-3xl text-orange-600 mb-2"></i>
+                        <div class="font-bold text-sm text-gray-700">吉隆坡天氣</div>
+                    </a>
+                    <a href="https://windy.app/zh/forecast2/spot/4723341/Zen+M%C3%B6venpick+Kuredhivaru+" target="_blank" class="bg-white p-4 rounded-xl shadow-sm text-center border hover:bg-gray-50">
+                        <i class="fa-solid fa-umbrella-beach text-3xl text-purple-600 mb-2"></i>
+                        <div class="font-bold text-sm text-gray-700">莫凡彼渡假村天氣</div>
+                    </a>
+                </div>
+                <div class="bg-red-50 rounded-xl p-4 mb-4 border border-red-100">
+                    <h3 class="font-bold text-red-700 mb-2"><i class="fa-solid fa-phone-volume mr-2"></i>緊急聯絡</h3>
+                    <ul class="text-sm space-y-2 text-gray-800">
+                        <li class="flex justify-between"><span>警察局</span> <span class="font-bold">110 / 999</span></li>
+                        <li class="flex justify-between"><span>救護車</span> <span class="font-bold">120 / 995</span></li>
+                        <li class="flex justify-between"><span>火警</span> <span class="font-bold">119 / 995</span></li>
+                    </ul>
+                </div>
+                <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-6">
+                    <h3 class="font-bold text-gray-800 mb-3"><i class="fa-solid fa-bell text-yellow-600 mr-2"></i>小提醒</h3>
+                    <ul class="list-disc list-inside text-sm text-gray-700 space-y-2">
+                        <li><strong>衣物：</strong>全數為熱帶氣候，帶夏季衣物。但出發/回程台灣時需備一件保暖外套。</li>
+                        <li><strong>防曬：</strong>馬爾地夫與新加坡紫外線強，必備帽子、墨鏡、防曬乳。</li>
+                        <li><strong>插座：</strong>新加坡/馬來西亞/馬爾地夫多為英式三孔 (Type G)，請帶轉接頭。</li>
+                        <li><strong>網路：</strong>提前購買 eSIM 或漫遊。</li>
+                    </ul>
+                </div>
+                <!-- Travel Notices -->
+                <div class="space-y-4">
+                    <h3 class="font-bold text-gray-800 text-lg mb-2 border-l-4 border-sand-gold pl-2">旅程注意事項</h3>
+                    <!-- Singapore -->
+                    <div class="bg-white rounded-xl p-4 shadow-sm border-l-4 border-island-blue">
+                        <h4 class="font-bold text-island-blue mb-2 flex items-center"><i class="fa-solid fa-city mr-2"></i>新加坡 (Singapore)</h4>
+                        <div class="text-sm text-gray-700 space-y-2">
+                            <p class="text-xs text-gray-500">現代化、法規嚴格、幾乎無現金</p>
+                            <div class="bg-blue-50 p-2 rounded">
+                                <strong class="block text-blue-700 mb-1">💳 支付方式</strong>
+                                <ul class="list-disc list-inside pl-1 text-xs">
+                                    <li><strong>首選：</strong>信用卡 / Apple Pay / Google Pay (地鐵公車直接刷)。</li>
+                                    <li><strong>次選：</strong>現金 (牛車水/舊式雜貨店)。</li>
+                                </ul>
+                            </div>
+                            <div class="bg-blue-50 p-2 rounded">
+                                <strong class="block text-blue-700 mb-1">💵 現金建議 (SGD)</strong>
+                                <p class="text-xs">建議每天約 $30-$50 (約 NT$700-1,200)，應急或平價美食用。</p>
+                            </div>
+                            <div class="bg-red-50 p-2 rounded border border-red-100">
+                                <strong class="block text-red-600 mb-1">⚠️ 絕對禁止/注意</strong>
+                                <ul class="list-disc list-inside pl-1 text-xs space-y-1">
+                                    <li>禁食口香糖、地鐵內嚴禁飲食(含水)。</li>
+                                    <li>亂丟垃圾、隨地吐痰罰款重。</li>
+                                    <li>抽菸僅限特定區域。</li>
+                                    <li><strong>禁酒令：</strong>10:30 PM - 7:00 AM 公共場所禁酒。</li>
+                                    <li><strong>穿越馬路：</strong>50m內有斑馬線/天橋需使用。</li>
+                                    <li>禁止餵食野生動物 (鴿/猴/豬)。</li>
+                                    <li><strong>嚴禁電子菸：</strong>持有/使用皆違法，罰款高。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Maldives -->
+                    <div class="bg-white rounded-xl p-4 shadow-sm border-l-4 border-cyan-500">
+                        <h4 class="font-bold text-cyan-600 mb-2 flex items-center"><i class="fa-solid fa-water mr-2"></i>馬爾地夫 (Maldives)</h4>
+                        <div class="text-sm text-gray-700 space-y-2">
+                            <p class="text-xs text-gray-500">一島一飯店、美金為主、小費文化</p>
+                            <div class="bg-cyan-50 p-2 rounded">
+                                <strong class="block text-cyan-700 mb-1">💳 支付方式</strong>
+                                <ul class="list-disc list-inside pl-1 text-xs">
+                                    <li><strong>渡假村：</strong>信用卡/美金 (記帳後一次結算)。</li>
+                                    <li><strong>居民島：</strong>當地貨幣(MVR)/美金。雜貨店收現，餐廳收卡。</li>
+                                </ul>
+                            </div>
+                            <div class="bg-cyan-50 p-2 rounded">
+                                <strong class="block text-cyan-700 mb-1">💵 現金建議 (USD)</strong>
+                                <ul class="list-disc list-inside pl-1 text-xs">
+                                    <li><strong>小費：</strong>需大量 $1, $5, $10 小鈔。每天預算約 $10-$20。</li>
+                                    <li><strong>注意：</strong>不收舊版/污漬/破損美金，請換新鈔。</li>
+                                </ul>
+                            </div>
+                            <div class="bg-red-50 p-2 rounded border border-red-100">
+                                <strong class="block text-red-600 mb-1">⚠️ 注意事項</strong>
+                                <ul class="list-disc list-inside pl-1 text-xs space-y-1">
+                                    <li><strong>宗教：</strong>伊斯蘭國家，嚴禁帶豬肉/酒入境。</li>
+                                    <li><strong>飲酒：</strong>僅限渡假村/酒船；居民島全面禁酒。</li>
+                                    <li><strong>服裝：</strong>居民島街道勿穿比基尼。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- KL -->
+                    <div class="bg-white rounded-xl p-4 shadow-sm border-l-4 border-orange-500">
+                        <h4 class="font-bold text-orange-600 mb-2 flex items-center"><i class="fa-solid fa-mosque mr-2"></i>吉隆坡 (Kuala Lumpur)</h4>
+                        <div class="text-sm text-gray-700 space-y-2">
+                            <p class="text-xs text-gray-500">多元文化、現金/電子支付並存、治安留意</p>
+                            <div class="bg-orange-50 p-2 rounded">
+                                <strong class="block text-orange-700 mb-1">💳 支付方式</strong>
+                                <ul class="list-disc list-inside pl-1 text-xs">
+                                    <li><strong>混合制：</strong>百貨可刷卡，街邊/夜市多收現金 (MYR)。</li>
+                                    <li><strong>交通卡 (TNG)：</strong>搭捷運必備。</li>
+                                    <li><strong>叫車：</strong>Grab App 綁卡，避免找零/繞路。</li>
+                                </ul>
+                            </div>
+                            <div class="bg-orange-50 p-2 rounded">
+                                <strong class="block text-orange-700 mb-1">💵 現金建議 (MYR)</strong>
+                                <p class="text-xs">建議每天約 RM150-RM200 (約 NT$1,100-1,500)。現金佔比需比新加坡高。</p>
+                            </div>
+                            <div class="bg-red-50 p-2 rounded border border-red-100">
+                                <strong class="block text-red-600 mb-1">⚠️ 注意事項</strong>
+                                <ul class="list-disc list-inside pl-1 text-xs space-y-1">
+                                    <li><strong>治安：</strong>小心飛車搶劫，包包背內側，走路不滑手機。</li>
+                                    <li><strong>禮儀：</strong>進清真寺脫鞋/端莊。右手進食/遞物。</li>
+                                    <li><strong>插座：</strong>240V 英式三孔 (品字型)，需轉接頭。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bg-white border-t border-gray-300 flex justify-around items-center h-16 shrink-0 pb-safe z-20 shadow-[0_-1px_3px_rgba(0,0,0,0.1)]">
+            <button onclick="switchTab('plan')" class="nav-btn active flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-island-blue transition-colors" data-target="plan">
+                <i class="fa-solid fa-map-location-dot text-xl mb-1"></i>
+                <span class="text-[10px] font-medium">行程</span>
+            </button>
+            <button onclick="switchTab('wallet')" class="nav-btn flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-coral-pink transition-colors" data-target="wallet">
+                <i class="fa-solid fa-wallet text-xl mb-1"></i>
+                <span class="text-[10px] font-medium">記帳</span>
+            </button>
+            <button onclick="switchTab('summary')" class="nav-btn flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-palm-green transition-colors" data-target="summary">
+                <i class="fa-solid fa-file-invoice-dollar text-xl mb-1"></i>
+                <span class="text-[10px] font-medium">支出表</span>
+            </button>
+            <button onclick="switchTab('lists')" class="nav-btn flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-purple-600 transition-colors" data-target="lists">
+                <i class="fa-solid fa-list-check text-xl mb-1"></i>
+                <span class="text-[10px] font-medium">清單</span>
+            </button>
+            <button onclick="switchTab('info')" class="nav-btn flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-blue-700 transition-colors" data-target="info">
+                <i class="fa-solid fa-circle-info text-xl mb-1"></i>
+                <span class="text-[10px] font-medium">資訊</span>
+            </button>
+        </nav>
+        
+        <!-- Delete Confirmation Modal -->
+        <div id="delete-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-lg w-full max-w-xs p-5 transform transition-all scale-100">
+                <h3 class="text-lg font-bold text-gray-800 mb-2">確認刪除</h3>
+                <p class="text-gray-600 text-sm mb-6">確定要刪除這筆記帳資料嗎？</p>
+                <div class="flex gap-3">
+                    <button onclick="closeDeleteModal()" class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition">取消</button>
+                    <button onclick="confirmDelete()" class="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-red-600 transition shadow-sm">刪除</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Javascript Logic -->
+    <script>
+        // --- Data ---
+        const itineraryData = [
+            {
+                day: "Day 1", date: "1/23 (五)", loc: "TPE ✈️ SIN",
+                timeline: [
+                    { time: "04:00", title: "起床盥洗", desc: "準備出發！" },
+                    { time: "04:30", title: "前往桃園機場 T2", desc: "", traffic: "送機專車 (KKDAY)" },
+                    { time: "05:30", title: "Check in & 免稅店", desc: "" },
+                    { 
+                        time: "08:25", 
+                        title: "飛往新加坡", 
+                        desc: "1.抵達前 3 天內上網填寫從MyICA Mobile線上填寫入境卡，填好後截圖QRcode<br>(酒店訂單和返程機票訂單印下來備用)<br>2.抵達樟宜機場(自動通關入境)走自動通道", 
+                        traffic: "星宇航空 JX771" 
+                    },
+                    { time: "14:30", title: "前往飯店", desc: "", traffic: "接機專車" },
+                    { time: "15:20", title: "Check in", desc: "新加坡烏節全季酒店", type: "hotel" },
+                    { time: "16:00", title: "萊佛士坊 & 魚尾獅公園", desc: "", traffic: "地鐵 NS線", map: "https://maps.app.goo.gl/mVqHQAUdEF8tP15r7" },
+                    { time: "17:00", title: "前往克拉碼頭", desc: "晚餐: JUwei Nanyang 聚味老南洋咖啡店", link: "https://theju.sg/pages/juwei-nanyang", map: "https://maps.app.goo.gl/6TPiTkmYeKBsurQs6" },
+                    { time: "19:00", title: "克拉碼頭遊船", desc: "抵達克拉瑪頭先去HOOTERS旁邊的櫃台換票", map: "https://maps.app.goo.gl/MDrDRhuvaGgCu84v6" },
+                    { time: "19:40", title: "克拉碼頭中心逛逛", desc: "" },
+                    { time: "21:00", title: "回飯店", desc: `散步去7-11買零食&啤酒<br><a href="https://maps.app.goo.gl/syN7ZyM4n7nqJu8fA" target="_blank" class="inline-block mt-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200"><i class="fa-solid fa-map-location-dot mr-1"></i>7-11 地圖</a><br>住宿: <a href='https://maps.app.goo.gl/KZBnjWzNk37gTjfMA' target='_blank' class='inline-block mt-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200'>新加坡烏節全季酒店</a>` }
+                ]
+            },
+            {
+                day: "Day 2", date: "1/24 (六)", loc: "小印度 & 濱海灣",
+                timeline: [
+                    { time: "07:30", title: "起床盥洗", desc: "" },
+                    { time: "08:10", title: "前往 亞坤加椰吐司", desc: "", map: "https://maps.app.goo.gl/ZBNK5eJP3U7Agf87A" },
+                    { time: "08:30", title: "早餐: 亞坤加椰吐司", desc: "經典星國早餐" },
+                    { 
+                        time: "09:30", 
+                        title: "小印度 & 哈芝巷", 
+                        desc: `<a href="https://maps.app.goo.gl/s24TqWGQup64gWGFA" target="_blank" class="text-blue-600 underline hover:text-blue-800">City Walk</a><br><span class="text-xs text-gray-500 block mt-1 mb-1">遊玩路線:</span>
+                        <a href="https://maps.app.goo.gl/8H3mwVGjvZF49Wjf8" target="_blank" class="route-link">Dunlop street</a> → 
+                        <a href="https://maps.app.goo.gl/zQr4YfkUH7xFw8Ys9" target="_blank" class="route-link">Norris Rd</a> → 
+                        <a href="https://maps.app.goo.gl/7821xk4QCT2GS1Pw7" target="_blank" class="route-link">Arab St</a> → 
+                        <a href="https://maps.app.goo.gl/iERPXKQKnBRGAh4f7" target="_blank" class="route-link">蘇丹回教堂</a> → 
+                        <a href="https://maps.app.goo.gl/TE7Som9uU5WjMed36" target="_blank" class="route-link">Bussorah St</a> → 
+                        <a href="https://maps.app.goo.gl/LyMxD1hyXRPg9jci7" target="_blank" class="route-link">哈芝巷</a>`, 
+                        traffic: "地鐵 NE線" 
+                    },
+                    { time: "11:30", title: "午餐: The Coconut Club", desc: "椰漿飯名店(已預約11:30)", link: "https://www.thecoconutclub.sg/", map: "https://maps.app.goo.gl/MGoiprWvA898a2u48" },
+                    { 
+                        time: "13:30", 
+                        title: "前往 金沙 & 濱海灣花園", 
+                        desc: `<a href="https://maps.app.goo.gl/qhv2XpoAjNncFfNe9" target="_blank" class="inline-block mt-1 mr-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200"><i class="fa-solid fa-map-location-dot mr-1"></i>濱海灣花園</a>`, 
+                        traffic: "地鐵 DT/CC線" 
+                    },
+                    { 
+                        time: "14:00", 
+                        title: "遊覽 濱海灣花園", 
+                        desc: `花芎 + 雲霧林<br>
+                        <a href="https://maps.app.goo.gl/dkNCT7mzMTMxpjNN9" target="_blank" class="inline-block mt-1 mr-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200"><i class="fa-solid fa-map-location-dot mr-1"></i>雲霧林</a>
+                        <a href="https://maps.app.goo.gl/ApneTJY9CNF8SMbR7" target="_blank" class="inline-block mt-1 mr-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200"><i class="fa-solid fa-map-location-dot mr-1"></i>花芎</a>`
+                    },
+                    { time: "16:30", title: "返回金沙酒店", desc: "" },
+                    { time: "17:00", title: "金沙酒店舢舨船", desc: "" },
+                    { time: "17:45", title: "晚餐: Bread Street Kitchen by Gordon Ramsay", desc: "", link: "https://hk.marinabaysands.com/restaurants/bread-street-kitchen.html/?utm_source=google&utm_medium=GMB&utm_campaign=bread_street_kitchen_info_main", map: "https://maps.app.goo.gl/dhhw2GsSdn9vRWRv9" },
+                    { time: "19:30", title: "下樓卡位等噴泉", desc: "" },
+                    { 
+                        time: "20:00", 
+                        title: "金沙購物中心噴泉燈光秀", 
+                        desc: "位置:金沙購物商城外的寶龍坊活動廣場<br><a href='https://hk.marinabaysands.com/guides/around-mbs/light-and-sound-show.html' target='_blank' class='inline-block mt-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200'>網頁連結</a>" 
+                    },
+                    { time: "20:15", title: "走過去擎天樹等音樂燈光秀", desc: "", map: "https://maps.app.goo.gl/CiuWWdVg2YPZW62Q8" },
+                    { time: "20:45", title: "擎天樹音樂燈光秀+極光秀", desc: "" },
+                    { time: "21:15", title: "返回飯店", desc: "住宿: 新加坡烏節全季酒店", traffic: "公車或地鐵" }
+                ]
+            },
+            {
+                day: "Day 3", date: "1/25 (日)", loc: "聖淘沙一日遊",
+                timeline: [
+                    { time: "08:30", title: "起床盥洗", desc: "" },
+                    { time: "09:30", title: "前往 怡豐城", desc: "", map: "https://maps.app.goo.gl/8PoebKzFmDyrAFiZA", traffic: "地鐵 NE線" },
+                    { time: "10:00", title: "早餐: 吐司工坊", desc: "怡豐城", map: "https://maps.app.goo.gl/e6jmt5DxxZ2ydJ7i8" },
+                    { 
+                        time: "11:00", 
+                        title: "回怡豐城 搭捷運進聖淘沙 前往名勝世界站", 
+                        desc: "出示klook QRcode搭乘<br>位置:怡豐城3樓<br><a href='https://kimiyo.tw/sentosa/' target='_blank' class='inline-block mt-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200'>網頁連結</a>", 
+                        traffic: "地鐵聖淘沙線" 
+                    },
+                    { time: "11:30", title: "環球影城門口拍照", desc: "", map: "https://maps.app.goo.gl/PvbdMJuwg8An7bZe8" },
+                    { 
+                        time: "11:40", 
+                        title: "賭場+weave商場逛", 
+                        desc: `肚子餓的話可以在那邊買個啥墊胃<br>
+                        <a href="https://maps.app.goo.gl/sDaRDv3esEyJG6Mo8" target="_blank" class="inline-block mt-1 mr-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200"><i class="fa-solid fa-map-location-dot mr-1"></i>賭場</a>
+                        <a href="https://maps.app.goo.gl/GmV4qB6QKLQdxBnm7" target="_blank" class="inline-block mt-1 mr-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200"><i class="fa-solid fa-map-location-dot mr-1"></i>weave商場</a>` 
+                    },
+                    { time: "14:00", title: "天際線纜車", desc: "從 Beach Station 開始", map: "https://maps.app.goo.gl/UDa9cPn4k1W657uy9" },
+                    { time: "16:00", title: "巴拉灣海灘", desc: "亞洲最南端立牌", map: "https://maps.app.goo.gl/SvWPx6yLtbTEqsym8" },
+                    { time: "17:00", title: "晚餐: Shake Shack", desc: "Sentosa 分店", link: "https://www.shakeshack.com.sg/shake-restaurants/sentosa/", map: "https://maps.app.goo.gl/V6WwvX4SEJQA6K4P9" },
+                    { 
+                        time: "18:30", 
+                        title: "買個飲料過去排時光之翼入場", 
+                        desc: `LiHO TEA 或 Mr. Coconut<br>
+                        <a href="https://maps.app.goo.gl/cSptrFfSfTmZeXvL8" target="_blank" class="inline-block mt-1 mr-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200"><i class="fa-solid fa-map-location-dot mr-1"></i>LiHO</a>
+                        <a href="https://maps.app.goo.gl/TxFVhBvLimKAVEnE7" target="_blank" class="inline-block mt-1 mr-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200"><i class="fa-solid fa-map-location-dot mr-1"></i>Mr. Coconut</a>
+                        <a href="https://maps.app.goo.gl/zJhCz2bu3Nds1pyWA" target="_blank" class="inline-block mt-1 mr-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200"><i class="fa-solid fa-map-location-dot mr-1"></i>時光之翼</a>` 
+                    },
+                    { 
+                        time: "19:40", 
+                        title: "時光之翼煙火秀", 
+                        desc: "<a href='https://retrievertrip.com/%E6%99%82%E5%85%89%E4%B9%8B%E7%BF%BC/#%e6%96%b0%e5%8a%a0%e5%9d%a1%e6%99%82%e5%85%89%e4%b9%8b%e7%bf%bc%e7%b8%bd%e9%95%b7%e6%99%82%e9%96%93' target='_blank' class='inline-block mt-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200'>網頁連結</a>"
+                    },
+                    { time: "20:00", title: "逛個紀念品店後回怡豐城", desc: "", traffic: "地鐵聖淘沙線" },
+                    { time: "20:30", title: "怡豐城小逛", desc: "" },
+                    { time: "21:30", title: "回飯店", desc: "住宿:新加坡烏節全季酒店", traffic: "地鐵 NE線" }
+                ]
+            },
+            {
+                day: "Day 4", date: "1/26 (一)", loc: "市區巡禮 ✈️ 馬爾地夫",
+                timeline: [
+                    { time: "08:30", title: "起床盥洗", desc: "" },
+                    { time: "09:30", title: "退房", desc: "行李寄放飯店" },
+                    { 
+                        time: "10:00", 
+                        title: "福康寧公園 & 舊禧街警察局", 
+                        desc: `網美拍照點<br>
+                        <a href="https://maps.app.goo.gl/Q6LqqRcG2SQt1T1fA" target="_blank" class="inline-block mt-1 mr-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200"><i class="fa-solid fa-map-location-dot mr-1"></i>福康寧公園</a>
+                        <a href="https://maps.app.goo.gl/ozrR5qx4N7juHvxo6" target="_blank" class="inline-block mt-1 mr-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200"><i class="fa-solid fa-map-location-dot mr-1"></i>舊禧街警察局</a>`
+                    },
+                    { time: "11:30", title: "前往 牛車水", desc: "", map: "https://maps.app.goo.gl/ZAw3KSMcmVgihSHa7", traffic: "公車或地鐵" },
+                    { 
+                        time: "11:50", 
+                        title: "午餐: 了凡油雞飯‧麵", 
+                        desc: "", 
+                        map: "https://maps.app.goo.gl/AfBdWA1sDVYXJhxN9" 
+                    },
+                    { 
+                        time: "12:50", 
+                        title: "牛車水逛逛", 
+                        desc: "可以去一下紀念品店 Singapore Gift Gate<br><a href='https://maps.app.goo.gl/DitKbuKHzWjLuJLv5' target='_blank' class='inline-block mt-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200'><i class='fa-solid fa-map-location-dot mr-1'></i>Singapore Gift Gate 地圖</a>" 
+                    },
+                    { time: "14:00", title: "返回飯店拿行李", desc: "", traffic: "地鐵 NE線" },
+                    { 
+                        time: "14:30", 
+                        title: "前往 樟宜機場 第二航廈", 
+                        desc: "前一晚上先上網填寫入境表 ，取得電子登機證", 
+                        traffic: "送機專車" 
+                    },
+                    { 
+                        time: "15:00", 
+                        title: "提前辦理托運行李", 
+                        desc: "到T2 的 Row 5 或 Row 6（新航的自助專區），找 Kiosk 機台掃描護照或電子登機證托運行李" 
+                    },
+                    { 
+                        time: "15:30", 
+                        title: "樟宜機場 走走晃晃", 
+                        desc: `<strong>T2航站:</strong><br>
+                        2F 入境 Public 區: 3D室內瀑布 (Gate 6-7中間)<br>
+                        2F: 免費 Skytrain (T2往T3，靠左窗拍攝)<br><br>
+                        <strong>T3航站:</strong><br>
+                        1F: 免費溜滑梯 (12:00-22:30, 下載註冊Changi App後在服務台出示會員QRcode兌換10次免費溜滑梯 , 入口在1F, 服務台在B2)<br>
+                        2F/3F: 蝴蝶園 (Butterfly Garden)<br><br>
+                        <strong>JEWEL 星耀樟宜 (T1):</strong><br>
+                        B2-L5: 瀑布 (Rain Vortex)<br>
+                        5F: 星空花園 (需門票)`
+                    },
+                    { time: "19:40", title: "Check IN 出境", desc: "" },
+                    { 
+                        time: "20:40", 
+                        title: "飛往馬爾地夫", 
+                        desc: "航班抵達前 96 小時內上網填寫入境表<br><a href='https://imuga.immigration.gov.mv/' target='_blank' class='inline-block mt-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200 mr-2'>入境表連結</a><a href='https://www.stan-travel.com/imuga-maldives-immigration/' target='_blank' class='inline-block mt-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200'>填寫教學連結</a>",
+                        traffic: "新航 SQ 438" 
+                    },
+                    { time: "01:15", title: "抵達馬爾地夫", desc: "" },
+                    { time: "02:15", title: "前往 過境旅館", desc: "住宿: 78 Veli", traffic: "專車接送" }
+                ]
+            },
+            {
+                day: "Day 5", date: "1/27 (二)", loc: "馬爾地夫 Kuredhivaru",
+                timeline: [
+                    { time: "Morning", title: "前往水飛機場", desc: "", traffic: "專車接送" },
+                    { time: "Check-in", title: "Mövenpick Resort Kuredhivaru", desc: "人間天堂開始！", type: "hotel", traffic: "水上飛機" },
+                    { time: "Lunch", title: "BODUMAS 日料", desc: "" },
+                    { time: "Dinner", title: "待定", desc: "" }
+                ]
+            },
+            {
+                day: "Day 6-8", date: "1/28 - 1/30", loc: "享受度假村設施",
+                timeline: [
+                    { time: "Daily", title: "ONU MARCHÉ 早餐", desc: "" },
+                    { time: "Day 8", title: "漂浮早餐", desc: "必拍行程" },
+                    { time: "Lunch", title: "LATITUDE 5.5 燒烤 / BODUMAS", desc: "" },
+                    { time: "Relax", title: "下午茶冰淇淋 / 浮潛 / SPA", desc: "" }
+                ]
+            },
+            {
+                day: "Day 9", date: "1/31 (六)", loc: "馬爾地夫 ✈️ 吉隆坡",
+                timeline: [
+                    { time: "17:00", title: "離開度假村", desc: "前往馬列居民島", traffic: "水上飛機" },
+                    { time: "18:00", title: "前往馬列機場", desc: "", traffic: "專車接送" },
+                    { time: "21:15", title: "飛往吉隆坡", desc: "", traffic: "亞洲航空 AK73" }
+                ]
+            },
+            {
+                day: "Day 10", date: "2/01 (日)", loc: "吉隆坡市區",
+                timeline: [
+                    { 
+                        time: "04:50", 
+                        title: "抵達吉隆坡", 
+                        desc: "1.抵達前 3 天內上網填寫MDAC 電子入境卡，填好後下載下來<br>(酒店訂單和返程機票訂單印下來備用)<br>2.抵達吉隆坡機場(自動通關入境)走自動通道<br><a href='https://imigresen-online.imi.gov.my/mdac/main' target='_blank' class='inline-block mt-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200 mr-2'>MDAC連結</a><a href='https://couplehuang.com/malaysia_mdac_request_kul_airport/' target='_blank' class='inline-block mt-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200'>填寫步驟&入境教學</a>" 
+                    },
+                    { time: "06:00", title: "早餐: 華陽冰室", desc: "", map: "https://maps.app.goo.gl/AnDgXBimjYUB73nX7" },
+                    { time: "07:30", title: "前往飯店寄放行李", desc: "飯店寄放行李&坐一下", traffic: "接機專車" },
+                    { time: "09:00", title: "前往 黑風洞鎮", desc: "", traffic: "Grab", map: "https://maps.app.goo.gl/1TToUK8biMQ4deGR8" },
+                    { time: "09:30", title: "黑風洞遊覽", desc: "巨型金佛廣場、彩虹階梯、主洞神廟、洞穴探險、藝術洞穴、摩羅洞" },
+                    { time: "12:30", title: "前往 柏威年廣場", desc: "", traffic: "Grab", map: "https://maps.app.goo.gl/cDRn7imYFY5HBYfS8" },
+                    { time: "13:00", title: "柏威年廣場逛吃", desc: "" },
+                    { time: "16:00", title: "回飯店休息一下", desc: "" },
+                    { time: "17:30", title: "前往城中城公園", desc: "", map: "https://maps.app.goo.gl/Ph4MrX6pMB9ZJPpN6" },
+                    { time: "17:45", title: "城中城公園逛逛", desc: "" },
+                    { time: "18:15", title: "吉隆坡國油雙峰塔 參觀", desc: "18:15集合，18:30開始參觀", map: "https://maps.app.goo.gl/bVZX53xTBqtjEiM59" },
+                    { time: "19:15", title: "KLCC逛吃", desc: "", map: "https://maps.app.goo.gl/19X67w2SnVLhCouVA" },
+                    { 
+                        time: "21:15", 
+                        title: "回飯店", 
+                        desc: `住宿: <a href='https://maps.app.goo.gl/CvhEu5XXgtChCFEE9' target='_blank' class='inline-block mt-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200'>活樂酒店</a><br>
+                        <div class="mt-2 pt-2 border-t border-gray-200">
+                            <span class="text-xs font-bold text-gray-700">如果還有體力可以去黃亞華小吃店吃宵夜</span><br>
+                            <span class="text-xs text-gray-500">推薦必點: 奶油蝦、沙嗲肉串、鹹蛋黃魷魚、雞翅、炒貝殼、烤魔鬼魚</span><br>
+                            <a href="https://maps.app.goo.gl/cfTmu4SAR5WsM5ky9" target="_blank" class="inline-block mt-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200"><i class="fa-solid fa-map-location-dot mr-1"></i>黃亞華小吃店地圖</a>
+                        </div>`, 
+                        type: "hotel" 
+                    }
+                ]
+            },
+            {
+                day: "Day 11", date: "2/02 (一)", loc: "吉隆坡文化巡禮",
+                timeline: [
+                    { time: "08:30", title: "起床盥洗", desc: "" },
+                    { time: "09:30", title: "前往 源昌隆咖啡店", desc: "", traffic: "地鐵 KGL線", map: "https://maps.app.goo.gl/nrzNxuqUhDRyJHAZ9" },
+                    { time: "10:00", title: "早餐: 源昌隆咖啡店", desc: "需排隊" },
+                    { 
+                        time: "11:00", 
+                        title: "茨廠街 Citywalk", 
+                        desc: `遊玩路線:<br>
+                        <a href="https://maps.app.goo.gl/LUfpMnfout31oiMa9" target="_blank" class="route-link">鬼仔巷</a> → 
+                        <a href="https://maps.app.goo.gl/K53Za11DjaAr1gj69" target="_blank" class="route-link">馬里安曼興都廟</a> → 
+                        <a href="https://maps.app.goo.gl/ye4Eh5J2ZAGLbJD47" target="_blank" class="route-link">茨廠街市場</a> → 
+                        <a href="https://maps.app.goo.gl/354H2uZTYTsDbFAt6" target="_blank" class="route-link">REXKL</a> → 
+                        <a href="https://maps.app.goo.gl/W5iNb896njK9ukab7" target="_blank" class="route-link">Jimmys Ice Cream</a> → 
+                        <a href="https://maps.app.goo.gl/puejDvVgZ7CDzgQW6" target="_blank" class="route-link">羅漢果龍眼冰糖燉冬瓜</a> → 
+                        <a href="https://maps.app.goo.gl/rB7UgUjd9MbS3mrd8" target="_blank" class="route-link">義欽豆腐花/豆漿水</a> → 
+                        <a href="https://maps.app.goo.gl/5PmcVh1gihLsoSx67" target="_blank" class="route-link">Madam Tang Machi Popo</a> → 
+                        <a href="https://maps.app.goo.gl/5p9ysKtGAYTAM3Xv5" target="_blank" class="route-link">中央市場</a> → 
+                        <a href="https://maps.app.goo.gl/zqrf34Vk86MbWbxD6" target="_blank" class="route-link">I Love KL Statue</a> → 
+                        <a href="https://maps.app.goo.gl/rmEoMPsgLJbnQWKu5" target="_blank" class="route-link">River of Life</a> → 
+                        <a href="https://maps.app.goo.gl/yEvBgpQdtKkH62gm9" target="_blank" class="route-link">獨立廣場</a> → 
+                        <a href="https://maps.app.goo.gl/FFUUQghXWfbLKQKc6" target="_blank" class="route-link">占美回教堂</a>`
+                    },
+                    { time: "14:00", title: "前往 敦拉薩國際貿易購物天堂", desc: "", traffic: "Grab", map: "https://maps.app.goo.gl/5cpmU8RhhfUmfiMH8" },
+                    { time: "14:30", title: "下午茶: 海腳人", desc: "", map: "https://maps.app.goo.gl/UrfHGMDPJ1kGyfmF9" },
+                    { time: "15:30", title: "敦拉薩國際貿易購物天堂 逛逛", desc: "" },
+                    { time: "17:30", title: "回武吉免登", desc: "", map: "https://maps.app.goo.gl/SWAVvULFtTPZTg4d8" },
+                    { 
+                        time: "17:45", 
+                        title: "武吉免登一帶逛街", 
+                        desc: `<a href="https://maps.app.goo.gl/TdmHQVhfbXLjVUVb9" target="_blank" class="inline-block mt-1 mr-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200"><i class="fa-solid fa-map-location-dot mr-1"></i>劉蝶廣場</a>
+                        <a href="https://maps.app.goo.gl/TpKjA6ZyrY7D6swx5" target="_blank" class="inline-block mt-1 mr-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200"><i class="fa-solid fa-map-location-dot mr-1"></i>樂天廣場</a>
+                        <a href="https://maps.app.goo.gl/8E1GxdJtuXLScaSW9" target="_blank" class="inline-block mt-1 mr-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200"><i class="fa-solid fa-map-location-dot mr-1"></i>麥當勞</a>`
+                    },
+                    { 
+                        time: "19:00", 
+                        title: "亞羅街夜市", 
+                        desc: `<a href="https://maps.app.goo.gl/EufgWQwrE2GsnobK7" target="_blank" class="inline-block mb-2 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200"><i class="fa-solid fa-map-location-dot mr-1"></i>亞羅街夜市地圖</a><br>
+                        推薦店家:<br>
+                        <a href="https://maps.app.goo.gl/AyzdxhYmhjSFrqi69" target="_blank" class="inline-block mt-1 mr-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200"><i class="fa-solid fa-map-location-dot mr-1"></i>TG's Bistro</a>
+                        <a href="https://maps.app.goo.gl/EYRd3jRejDCCH7Dt5" target="_blank" class="inline-block mt-1 mr-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200"><i class="fa-solid fa-map-location-dot mr-1"></i>MAMAM Place 榴槤甜點</a>
+                        <a href="https://maps.app.goo.gl/UsGQgXxu2dbD2t4GA" target="_blank" class="inline-block mt-1 mr-1 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200"><i class="fa-solid fa-map-location-dot mr-1"></i>明記燒魚美味店</a>`
+                    },
+                    { time: "21:00", title: "回飯店", desc: "住宿: 活樂飯店" }
+                ]
+            },
+            {
+                day: "Day 12", date: "2/03 (二)", loc: "KUL ✈️ TPE",
+                timeline: [
+                    { time: "08:30", title: "起床盥洗", desc: "" },
+                    { time: "09:30", title: "前往 新峰肉骨茶", desc: "", map: "https://maps.app.goo.gl/e8hcgx6XDgqNXAxG8" },
+                    { time: "09:45", title: "早餐: 新峰肉骨茶", desc: "" },
+                    { time: "10:45", title: "回飯店", desc: "整理行李休整" },
+                    { time: "11:00", title: "彈性時間", desc: "" },
+                    { time: "12:00", title: "前往吉隆坡機場 T1", desc: "", traffic: "送機專車" },
+                    { time: "13:00", title: "Check in", desc: "" },
+                    { time: "15:25", title: "飛往 桃園機場 T2", desc: "", traffic: "長榮航空 BR228" },
+                    { time: "20:05", title: "入境台灣", desc: "甜蜜的家" },
+                    { time: "21:30", title: "前往 東日商店", desc: "", traffic: "接機專車" }
+                ]
+            }
+        ];
+
+        const checklistData = [
+            {
+                id: "common",
+                title: "共同項目",
+                icon: "fa-suitcase-rolling",
+                color: "text-blue-600",
+                bg: "bg-blue-50",
+                items: [
+                    { 
+                        cat: "重要證件與金流", 
+                        list: ["護照 (有效期限>6個月)", "免簽證申請 (星/馬/馬爾地夫)", "錢包、信用卡", "現金 (新幣、美金、馬幣)"] 
+                    },
+                    { 
+                        cat: "3C 與攝影", 
+                        list: ["手機", "手錶", "SIM 卡 (三國)", "行動電源、豆腐頭、充電線、轉接器", "相機 (電池、記憶卡、變焦/定焦鏡頭各一)、腳架、偏振鏡"] 
+                    },
+                    { 
+                        cat: "生活與藥品", 
+                        list: ["藥品 (止痛/止瀉/腸胃/感冒/暈船藥/蔓越莓/益生菌/脹氣藥)", "盥洗用品 (牙刷/牙膏/毛巾/除毛/沐浴乳/洗髮乳/洗面乳)", "防曬乳、防曬泥", "墨鏡、眼鏡盒", "頸枕", "洗衣精", "毛巾*2", "雨傘", "防蚊液"] 
+                    },
+                    { 
+                        cat: "水上活動", 
+                        list: ["游泳圈*2", "安全繩 (水屋浮潛用)", "浮潛面鏡、漂浮袋", "游泳防水包、手機防水袋"] 
+                    }
+                ]
+            },
+            {
+                id: "yuyun",
+                title: "毓芸",
+                icon: "fa-person-dress",
+                color: "text-pink-500",
+                bg: "bg-pink-50",
+                items: [
+                    { 
+                        cat: "美妝與隱眼", 
+                        list: ["化妝包、刷具包", "卸妝水、卸妝棉", "洗臉巾*12", "隱形眼鏡(美瞳+透明)", "隱形眼鏡保養液、生理食鹽水"] 
+                    },
+                    { 
+                        cat: "度假穿搭", 
+                        list: ["DAY1 藏青中式+藏青小外套+歲歲平安項鍊", "DAY2 虞美人+半身裙", "DAY3 藍色度假連身短褲", "DAY4 藍色吊帶裙套裝+蝴蝶純銀項鍊", "DAY5-8 黃色長裙+黃色網紗耳夾", "DAY5-8 夢華錄+綠蝴蝶耳環+莊周夢蝶項鍊", "DAY9 WANGXO 棕色長裙+腰鍊+棕金珍珠耳夾", "DAY10 藏青中式+藏青小外套+歲歲平安項鍊", "DAY11 藍色吊帶裙套裝+蝴蝶純銀項鍊", "DAY12 藍色度假連身短褲", "內衣*6、nubra、免洗內褲*12、襪子*10", "耳環、項鍊"] 
+                    },
+                    { 
+                        cat: "泳衣與潛水", 
+                        list: ["紫色比基尼套裝", "棕色比基尼套裝", "落日餘暉比基尼套裝", "wave shine連體比基尼", "airspace 連體比基尼", "水母衣+水母長褲", "潛水襪、潛水手套、潛水帽", "毛巾衣 2件", "防曬衣、防曬手套", "泳衣打底內褲*5"] 
+                    },
+                    { 
+                        cat: "鞋帽睡衣", 
+                        list: ["拖鞋1雙、涼鞋1雙", "布鞋1雙", "草帽2頂", "睡衣2套"] 
+                    }
+                ]
+            },
+            {
+                id: "junan",
+                title: "俊安",
+                icon: "fa-person",
+                color: "text-blue-500",
+                bg: "bg-blue-50",
+                items: [
+                    { 
+                        cat: "度假穿搭", 
+                        list: [
+                            "DAY1 藏青長袖襯衫+白色短褲",
+                            "DAY2 卡其長袖襯衫+西裝灰色長褲",
+                            "DAY3 工裝灰色襯衫+卡其長褲",
+                            "DAY4 藍色短袖花襯衫+西裝黑色長褲",
+                            "DAY5-8 黃色短袖襯衫+黑色短褲",
+                            "DAY5-8 新中式短袖襯衫+軍綠短褲",
+                            "DAY9 卡其長袖襯衫+西裝黑色長褲",
+                            "DAY10 藏青長袖襯衫+白色短褲",
+                            "DAY11 藍色短袖花襯衫+西裝黑色長褲",
+                            "DAY12 工裝灰色襯衫+卡其長褲",
+                            "短袖T * 5 / 背心*2",
+                            "睡衣*2 套",
+                            "襪子*8套",
+                            "仲間項鍊"
+                        ] 
+                    },
+                    { 
+                        cat: "泳衣與潛水", 
+                        list: ["短泳褲*1", "拉鍊水母衣*1、水母衣*1", "衝浪短褲*2", "浮潛帽*1、浮潛面鏡*1"] 
+                    },
+                    { 
+                        cat: "鞋帽與雜項", 
+                        list: ["北臉拖鞋*1", "鴨舌帽*1", "行李秤重器"] 
+                    }
+                ]
+            }
+        ];
+
+        // --- Summary Data (From Image) ---
+        const initialSummaryData = [
+            { cat: "機票", item: "星宇 台灣 -> 新加坡", junan: 12400, yuyun: 0 },
+            { cat: "機票", item: "新航 新加坡 -> 馬爾地夫", junan: 26465, yuyun: 0 },
+            { cat: "機票", item: "亞航 馬爾地夫 -> 吉隆坡", junan: 15469, yuyun: 0 },
+            { cat: "機票", item: "長榮 吉隆坡 -> 台灣", junan: 13949, yuyun: 0 },
+            { cat: "度假村", item: "莫凡比 + 過境旅館 (升級AI+1萬)", junan: 60000, yuyun: 141000 },
+            { cat: "酒店", item: "新加坡 (全季酒店-3晚)", junan: 13777, yuyun: 0 },
+            { cat: "酒店", item: "吉隆坡 (2晚)", junan: 0, yuyun: 0 },
+            { cat: "交通", item: "送機專車: 新埔 -> 桃園2航", junan: 1496, yuyun: 0 },
+            { cat: "交通", item: "接機專車: 桃機2航 -> 新埔", junan: 1430, yuyun: 0 },
+            { cat: "交通", item: "星/馬 機場飯店接送 (共4趟)", junan: 0, yuyun: 4085 },
+            { cat: "網路", item: "SIM 卡 (星馬-吃到飽)", junan: 1161, yuyun: 0 },
+            { cat: "網路", item: "SIM 卡 (馬爾地夫5日-17G)", junan: 1399, yuyun: 0 },
+            { cat: "保險", item: "新加坡+馬爾地夫+吉隆坡(12日)", junan: 0, yuyun: 5354 },
+            { cat: "娛樂", item: "金沙酒店舢舨船", junan: 0, yuyun: 487 },
+            { cat: "娛樂", item: "天際線纜車", junan: 0, yuyun: 1763 },
+            { cat: "娛樂", item: "時光之翼煙火秀", junan: 0, yuyun: 1190 },
+            { cat: "娛樂", item: "吉隆坡國油雙峰塔門票", junan: 0, yuyun: 2448 },
+            { cat: "娛樂", item: "新加坡克拉瑪頭遊船", junan: 0, yuyun: 1164 },
+            { cat: "交通", item: "聖淘沙捷運票", junan: 0, yuyun: 202 }
+        ];
+
+        // --- Logic ---
+
+        // Tab Switching
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(el => {
+                el.classList.remove('text-island-blue', 'text-palm-green', 'text-coral-pink', 'text-purple-600', 'text-blue-700', 'active-nav');
+                el.classList.add('text-gray-500');
+            });
+
+            const btn = document.querySelector(`.nav-btn[data-target="${tabId}"]`);
+            btn.classList.remove('text-gray-500');
+            
+            const colorMap = {
+                'plan': 'text-island-blue',
+                'summary': 'text-palm-green',
+                'wallet': 'text-coral-pink',
+                'lists': 'text-purple-600',
+                'info': 'text-blue-700'
+            };
+            btn.classList.add(colorMap[tabId]);
+        }
+
+        function renderItinerary() {
+            const container = document.getElementById('itinerary-container');
+            let html = '';
+            itineraryData.forEach((item) => {
+                html += `
+                    <details class="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <summary class="flex items-center justify-between p-4 cursor-pointer bg-white group-open:bg-gray-50 transition">
+                            <div class="flex items-center gap-3">
+                                <div>
+                                    <h3 class="font-bold text-lg text-gray-800">${item.day} <span class="text-sm font-normal text-gray-600 ml-1">${item.date}</span></h3>
+                                    <p class="text-xs text-gray-500 truncate w-60">${item.loc}</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-400 group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <div class="p-4 pt-0 border-t border-gray-100 bg-gray-50 text-sm">
+                            <div class="relative pl-4 border-l-2 border-gray-300 space-y-6 mt-4">
+                                ${item.timeline.map(t => `
+                                    <div class="relative">
+                                        <div class="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full border-2 border-white ${t.type === 'hotel' ? 'bg-purple-500' : 'bg-gray-400'}"></div>
+                                        <div class="flex justify-between items-start gap-2">
+                                            <div class="flex-1">
+                                                <span class="font-mono text-sm font-bold text-gray-600 block mb-0.5">${t.time}</span>
+                                                <h4 class="font-bold text-gray-800 text-base">${t.title}</h4>
+                                                ${t.desc ? `<p class="text-gray-600 mt-1 leading-relaxed">${t.desc}</p>` : ''}
+                                                ${t.link ? `<a href="${t.link}" target="_blank" class="inline-block mt-2 text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded hover:bg-orange-200"><i class="fa-solid fa-utensils mr-1"></i>餐廳連結</a>` : ''}
+                                                ${t.map ? `<a href="${t.map}" target="_blank" class="inline-block mt-2 ml-2 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded hover:bg-cyan-200"><i class="fa-solid fa-map-location-dot mr-1"></i>地圖</a>` : ''}
+                                            </div>
+                                            ${t.traffic ? `<div class="shrink-0 max-w-[40%] text-right"><span class="inline-block text-[11px] bg-blue-100 text-blue-800 border border-blue-200 px-2 py-1 rounded-md leading-tight text-center">${t.traffic}</span></div>` : ''}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </details>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        const calcInput = document.getElementById('calc-input');
+        const calcResult = document.getElementById('calc-result');
+        const rateInput = document.getElementById('exchange-rate');
+
+        function initCalc() {
+            const savedRate = localStorage.getItem('honeymoon_rate');
+            if (savedRate) rateInput.value = savedRate;
+            calcInput.addEventListener('input', calculate);
+        }
+
+        function calculate() {
+            const val = parseFloat(calcInput.value) || 0;
+            const rate = parseFloat(rateInput.value) || 4.5;
+            const res = Math.round(val * rate);
+            calcResult.textContent = res.toLocaleString();
+        }
+
+        function saveRate() {
+            localStorage.setItem('honeymoon_rate', rateInput.value);
+            calculate();
+        }
+
+        let expenses = JSON.parse(localStorage.getItem('honeymoon_expenses_v2')) || [];
+        let editingIndex = -1;
+
+        function renderExpenses() {
+            const list = document.getElementById('expense-list');
+            
+            if (expenses.length === 0) {
+                list.innerHTML = '<li class="text-center text-gray-400 py-4 text-sm">尚無記帳資料</li>';
+            } else {
+                list.innerHTML = expenses.slice(0, 10).map((ex, idx) => { 
+                    let displayAmt = ex.currency === 'TWD' ? `$${ex.amount}` : `${ex.currency} ${ex.amount}`;
+                    
+                    let methodIconClass = 'text-gray-500';
+                    let methodIcon = 'fa-credit-card';
+                    
+                    if (ex.paymentMethod === '現金') {
+                        methodIcon = 'fa-money-bill-1';
+                        methodIconClass = 'text-orange-500';
+                    } else if (ex.paymentMethod === '爸媽現金') {
+                        methodIcon = 'fa-hand-holding-dollar';
+                        methodIconClass = 'text-purple-500';
+                    }
+
+                    return `
+                    <li class="bg-white p-3 rounded-lg shadow-sm border border-gray-200 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            ${ex.img ? `<img src="${ex.img}" class="w-10 h-10 rounded object-cover border border-gray-300" onclick="viewImage('${ex.img}')">` : '<div class="w-10 h-10 rounded bg-gray-100 flex items-center justify-center text-gray-400 border border-gray-200"><i class="fa-solid fa-dollar-sign"></i></div>'}
+                            <div>
+                                <div class="font-bold text-gray-800 text-sm">${ex.item} <i class="fa-solid ${methodIcon} ${methodIconClass} text-[10px] ml-1 opacity-70"></i></div>
+                                <div class="text-[10px] text-gray-500">${ex.date} • ${ex.payer}付</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="font-bold text-coral-pink text-sm">${displayAmt}</span>
+                            <button onclick="editExpense(${idx})" class="text-gray-400 hover:text-blue-500"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteExpense(${idx})" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </li>
+                `}).join('');
+            }
+            renderSummary();
+        }
+
+        function renderSummary() {
+            const tbody = document.getElementById('summary-table-body');
+            let html = '';
+            
+            // 現金錢包初始與餘額計算
+            const cashWallets = { USD: 150, SGD: 200, MYR: 600 };
+            let parentsUsd = 2000;
+            
+            // 計算目前已扣除的現金
+            expenses.forEach(ex => {
+                // 原有現金邏輯
+                if (ex.paymentMethod === '現金' && cashWallets.hasOwnProperty(ex.currency)) {
+                    cashWallets[ex.currency] -= parseFloat(ex.amount);
+                }
+                // 爸媽現金邏輯 (只扣美金)
+                if (ex.paymentMethod === '爸媽現金' && ex.currency === 'USD') {
+                    parentsUsd -= parseFloat(ex.amount);
+                }
+            });
+
+            // 更新錢包 UI
+            document.getElementById('wallet-usd').textContent = cashWallets.USD.toFixed(1);
+            document.getElementById('wallet-sgd').textContent = cashWallets.SGD.toFixed(1);
+            document.getElementById('wallet-myr').textContent = cashWallets.MYR.toFixed(1);
+            document.getElementById('wallet-parents-usd').textContent = parentsUsd.toFixed(1);
+
+            // 1. Initial Budget/Pre-paid Items
+            initialSummaryData.forEach(row => {
+                html += `
+                    <tr>
+                        <td class="text-center">
+                            <div class="font-bold text-gray-700 leading-tight">${row.item}</div>
+                            <div class="text-[10px] text-gray-400 bg-gray-100 inline-block px-1 rounded mt-0.5">${row.cat}</div>
+                        </td>
+                        <td class="text-center text-gray-600 text-sm whitespace-nowrap">${row.junan > 0 ? row.junan.toLocaleString() : '-'}</td>
+                        <td class="text-center text-gray-600 text-sm whitespace-nowrap">${row.yuyun > 0 ? row.yuyun.toLocaleString() : '-'}</td>
+                    </tr>
+                `;
+            });
+
+            // 2. Added Expenses (Convert to TWD for summary)
+            const rates = { 'TWD': 1, 'SGD': 24.745, 'MYR': 8.24, 'MVR': 2.1, 'USD': 31.68666 }; 
+            
+            let totalJunan = initialSummaryData.reduce((acc, cur) => acc + cur.junan, 0);
+            let totalYuyun = initialSummaryData.reduce((acc, cur) => acc + cur.yuyun, 0);
+
+            if(expenses.length > 0) {
+                html += `<tr><td colspan="3" class="bg-blue-50 text-center font-bold text-xs py-1 text-blue-600">旅途新增支出</td></tr>`;
+                
+                expenses.forEach(ex => {
+                    const rate = rates[ex.currency] || 1;
+                    const twdVal = Math.round(ex.amount * rate);
+                    const isJunan = ex.payer === '俊安';
+                    const isParents = ex.paymentMethod === '爸媽現金';
+                    
+                    // 只有非爸媽現金支付的才計入分帳總額
+                    if (!isParents) {
+                        if(isJunan) totalJunan += twdVal;
+                        else totalYuyun += twdVal;
+                    }
+
+                    html += `
+                        <tr>
+                            <td class="text-center">
+                                <div class="font-bold text-gray-700 leading-tight">${ex.item} <span class="text-[9px] text-gray-400">(${ex.paymentMethod})</span></div>
+                                <div class="text-[10px] text-gray-400">${ex.currency !== 'TWD' ? `(${ex.currency} ${ex.amount})` : ''}</div>
+                            </td>
+                            <td class="text-center text-gray-600 text-sm whitespace-nowrap">${!isParents && isJunan ? twdVal.toLocaleString() : '-'}</td>
+                            <td class="text-center text-gray-600 text-sm whitespace-nowrap">${!isParents && !isJunan ? twdVal.toLocaleString() : '-'}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            tbody.innerHTML = html;
+            document.getElementById('total-junan').textContent = totalJunan.toLocaleString();
+            document.getElementById('total-yuyun').textContent = totalYuyun.toLocaleString();
+
+            const totalAll = totalJunan + totalYuyun;
+            document.getElementById('total-all').textContent = totalAll.toLocaleString();
+            
+            const split = totalAll / 2;
+            const diff = totalJunan - split;
+
+            const msgEl = document.getElementById('settlement-msg');
+            if(diff > 0) {
+                msgEl.innerHTML = `毓芸 需給 俊安 <span class="text-red-500">$${Math.round(diff).toLocaleString()}</span>`;
+            } else if (diff < 0) {
+                msgEl.innerHTML = `俊安 需給 毓芸 <span class="text-red-500">$${Math.round(Math.abs(diff)).toLocaleString()}</span>`;
+            } else {
+                msgEl.textContent = "目前結清";
+            }
+        }
+
+        let currentImgBase64 = null;
+        
+        document.getElementById('expense-img').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const maxWidth = 300; 
+                    const scale = maxWidth / img.width;
+                    canvas.width = maxWidth;
+                    canvas.height = img.height * scale;
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    currentImgBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    document.getElementById('img-preview').src = currentImgBase64;
+                    document.getElementById('img-preview-area').classList.remove('hidden');
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+
+        function clearImage() {
+            currentImgBase64 = null;
+            document.getElementById('expense-img').value = '';
+            document.getElementById('img-preview-area').classList.add('hidden');
+        }
+
+        function editExpense(idx) {
+            const ex = expenses[idx];
+            document.getElementById('expense-item').value = ex.item;
+            document.getElementById('expense-amount').value = ex.amount;
+            document.getElementById('expense-currency').value = ex.currency;
+            document.getElementById('expense-cat').value = ex.cat;
+            
+            const radios = document.getElementsByName('payer');
+            for(const radio of radios) {
+                if(radio.value === ex.payer) radio.checked = true;
+            }
+            
+            const methodRadios = document.getElementsByName('paymentMethod');
+            for(const radio of methodRadios) {
+                if(radio.value === (ex.paymentMethod || '信用卡')) radio.checked = true;
+            }
+
+            if(ex.img) {
+                currentImgBase64 = ex.img;
+                document.getElementById('img-preview').src = ex.img;
+                document.getElementById('img-preview-area').classList.remove('hidden');
+            } else {
+                clearImage();
+            }
+
+            editingIndex = idx;
+            const btn = document.getElementById('add-expense-btn');
+            btn.textContent = "確認修改";
+            btn.classList.replace('bg-coral-pink', 'bg-blue-500');
+            document.getElementById('cancel-edit-btn').classList.remove('hidden');
+            document.getElementById('tab-wallet').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function cancelEdit() {
+            editingIndex = -1;
+            document.getElementById('expense-item').value = '';
+            document.getElementById('expense-amount').value = '';
+            clearImage();
+            const btn = document.getElementById('add-expense-btn');
+            btn.textContent = "記帳並同步至報表";
+            btn.classList.replace('bg-blue-500', 'bg-coral-pink');
+            document.getElementById('cancel-edit-btn').classList.add('hidden');
+        }
+
+        function addExpense() {
+            const item = document.getElementById('expense-item').value;
+            const amount = document.getElementById('expense-amount').value;
+            const currency = document.getElementById('expense-currency').value;
+            const cat = document.getElementById('expense-cat').value;
+            const payer = document.querySelector('input[name="payer"]:checked').value;
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+            
+            if (!item || !amount) {
+                alert('請輸入項目和金額');
+                return;
+            }
+
+            if (editingIndex > -1) {
+                expenses[editingIndex] = {
+                    item, amount, currency, cat, payer, paymentMethod,
+                    img: currentImgBase64,
+                    date: expenses[editingIndex].date 
+                };
+                cancelEdit();
+            } else {
+                const now = new Date();
+                const dateStr = `${now.getMonth()+1}/${now.getDate()}`;
+                expenses.unshift({
+                    item, amount, currency, cat, payer, paymentMethod,
+                    img: currentImgBase64,
+                    date: dateStr
+                });
+            }
+
+            localStorage.setItem('honeymoon_expenses_v2', JSON.stringify(expenses));
+            if(editingIndex === -1) {
+                document.getElementById('expense-item').value = '';
+                document.getElementById('expense-amount').value = '';
+                clearImage();
+            }
+            renderExpenses();
+            switchTab('summary');
+        }
+
+        let deleteTargetIndex = -1;
+        function deleteExpense(idx) {
+            deleteTargetIndex = idx;
+            document.getElementById('delete-modal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('delete-modal').classList.add('hidden');
+            deleteTargetIndex = -1;
+        }
+
+        function confirmDelete() {
+            if(deleteTargetIndex > -1) {
+                expenses.splice(deleteTargetIndex, 1);
+                localStorage.setItem('honeymoon_expenses_v2', JSON.stringify(expenses));
+                if (editingIndex === deleteTargetIndex) cancelEdit();
+                else if (editingIndex > deleteTargetIndex) editingIndex--;
+                renderExpenses();
+            }
+            closeDeleteModal();
+        }
+
+        function viewImage(src) {
+            const w = window.open("");
+            w.document.write('<img src="'+src+'" style="max-width:100%"/>');
+        }
+
+        let checklistState = JSON.parse(localStorage.getItem('honeymoon_checklist_state')) || {};
+
+        function renderChecklist() {
+            const container = document.getElementById('checklist-container');
+            let html = '';
+            checklistData.forEach((section, sIdx) => {
+                html += `
+                    <details class="group bg-white border-b border-gray-100 last:border-b-0">
+                        <summary class="flex items-center justify-between p-4 cursor-pointer bg-${section.bg ? section.bg.split('-')[1] : 'white'} hover:bg-opacity-80 transition">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full ${section.bg} flex items-center justify-center ${section.color}">
+                                    <i class="fa-solid ${section.icon}"></i>
+                                </div>
+                                <h4 class="font-bold text-gray-800">${section.title}</h4>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-400 group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <div class="p-4 pt-2 bg-gray-50 text-sm">
+                `;
+                if (section.items.length === 0 || (section.items.length === 1 && section.items[0].list[0] === "(尚未新增項目)")) {
+                     html += `<div class="text-center text-gray-400 py-2">尚無項目</div>`;
+                } else {
+                    section.items.forEach((catGroup, cIdx) => {
+                        html += `<div class="mb-4 last:mb-0">
+                                    <h5 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">${catGroup.cat}</h5>
+                                    <div class="space-y-2">`;
+                        catGroup.list.forEach((itemText, iIdx) => {
+                            const itemId = `check_${sIdx}_${cIdx}_${iIdx}`;
+                            const isChecked = checklistState[itemId] || false;
+                            html += `
+                                <div class="flex items-start">
+                                    <div class="flex h-5 items-center">
+                                        <input id="${itemId}" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-island-blue focus:ring-island-blue cursor-pointer" ${isChecked ? 'checked' : ''} onchange="toggleCheck('${itemId}')">
+                                    </div>
+                                    <div class="ml-3 text-sm">
+                                        <label for="${itemId}" class="font-medium text-gray-700 cursor-pointer ${isChecked ? 'line-through text-gray-400' : ''}">${itemText}</label>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        html += `   </div></div>`;
+                    });
+                }
+                html += `</div></details>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function toggleCheck(id) {
+            const checkbox = document.getElementById(id);
+            const label = document.querySelector(`label[for="${id}"]`);
+            checklistState[id] = checkbox.checked;
+            localStorage.setItem('honeymoon_checklist_state', JSON.stringify(checklistState));
+            if (checkbox.checked) label.classList.add('line-through', 'text-gray-400');
+            else label.classList.remove('line-through', 'text-gray-400');
+        }
+
+        const memoArea = document.getElementById('memo-area');
+        const memoLinks = document.getElementById('memo-links');
+
+        function initMemo() {
+            memoArea.value = localStorage.getItem('honeymoon_memo') || '';
+            parseLinks();
+            memoArea.addEventListener('input', function() {
+                localStorage.setItem('honeymoon_memo', this.value);
+                parseLinks();
+            });
+        }
+
+        function parseLinks() {
+            const text = memoArea.value;
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            const matches = text.match(urlRegex);
+            if (matches && matches.length > 0) {
+                memoLinks.innerHTML = matches.map(url => 
+                    `<a href="${url}" target="_blank" class="block truncate text-blue-600 hover:underline"><i class="fa-solid fa-link mr-1 text-xs"></i>${url}</a>`
+                ).join('');
+            } else memoLinks.innerHTML = '';
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderItinerary();
+            initCalc();
+            renderExpenses();
+            renderChecklist();
+            initMemo();
+            switchTab('plan');
+        });
+    </script>
+</body>
+</html>
