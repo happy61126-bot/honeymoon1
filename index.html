@@ -71,8 +71,9 @@
                     <h1 class="font-serif text-xl font-bold tracking-wide"><i class="fa-solid fa-plane-departure mr-2"></i>蜜月之旅</h1>
                     <p class="text-xs text-blue-100 mt-1">Jan 23 - Feb 03 • 2025</p>
                 </div>
-                <div class="text-right">
-                    <i class="fa-solid fa-umbrella-beach text-2xl opacity-80"></i>
+                <div class="text-right cursor-pointer hover:opacity-80 transition" onclick="openItineraryModal()">
+                    <i class="fa-solid fa-umbrella-beach text-2xl opacity-80 text-yellow-300"></i>
+                    <span class="text-[10px] block opacity-90 font-bold">編輯行程</span>
                 </div>
             </div>
         </header>
@@ -452,13 +453,73 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Itinerary Edit Modal -->
+        <div id="edit-itinerary-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 z-50 overflow-y-auto">
+            <div class="min-h-screen px-4 text-center">
+                <span class="inline-block h-screen align-middle" aria-hidden="true">&#8203;</span>
+                <div class="inline-block w-full max-w-lg p-5 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-medium leading-6 text-gray-900">編輯每日行程</h3>
+                        <button onclick="closeItineraryModal()" class="text-gray-500 hover:text-gray-700"><i class="fa-solid fa-xmark text-xl"></i></button>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">選擇日期</label>
+                        <select id="edit-day-select" class="w-full border rounded-lg p-2 text-sm bg-gray-50" onchange="renderEditItems()"></select>
+                    </div>
+
+                    <div id="edit-items-list" class="space-y-3 max-h-60 overflow-y-auto mb-4 p-1">
+                        <!-- Items go here -->
+                    </div>
+
+                    <button onclick="addNewItineraryItem()" class="w-full py-2 bg-green-100 text-green-700 rounded-lg text-sm font-bold mb-4 hover:bg-green-200"><i class="fa-solid fa-plus mr-1"></i>新增行程</button>
+
+                    <!-- Edit Form (Hidden by default, shown when editing) -->
+                    <div id="edit-item-form" class="hidden bg-gray-50 p-3 rounded-lg border border-gray-200 space-y-3">
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="col-span-1">
+                                <label class="text-[10px] font-bold text-gray-500">時間</label>
+                                <input type="text" id="edit-form-time" class="w-full border rounded p-1 text-sm">
+                            </div>
+                            <div class="col-span-2">
+                                <label class="text-[10px] font-bold text-gray-500">標題</label>
+                                <input type="text" id="edit-form-title" class="w-full border rounded p-1 text-sm">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-500">描述 (支援HTML換行)</label>
+                            <textarea id="edit-form-desc" class="w-full border rounded p-1 text-sm h-16"></textarea>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-500">餐廳/網站連結 (選填)</label>
+                                <input type="text" id="edit-form-link" placeholder="https://..." class="w-full border rounded p-1 text-sm">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-500">地圖連結 (選填)</label>
+                                <input type="text" id="edit-form-map" placeholder="https://..." class="w-full border rounded p-1 text-sm">
+                            </div>
+                        </div>
+                         <div>
+                            <label class="text-[10px] font-bold text-gray-500">交通方式 (選填)</label>
+                            <input type="text" id="edit-form-traffic" class="w-full border rounded p-1 text-sm">
+                        </div>
+                        <div class="flex gap-2 mt-2">
+                            <button onclick="saveEditItem()" class="flex-1 bg-island-blue text-white py-2 rounded-lg text-sm shadow">確認儲存</button>
+                            <button onclick="cancelEditItem()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg text-sm shadow">取消</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 
     <!-- Javascript Logic -->
     <script>
         // --- Data ---
-        const itineraryData = [
+        const defaultItineraryData = [
             {
                 day: "Day 1", date: "1/23 (五)", loc: "TPE ✈️ SIN",
                 timeline: [
@@ -774,6 +835,9 @@
             }
         ];
 
+        // Load itinerary from local storage or use default
+        let itineraryData = JSON.parse(localStorage.getItem('honeymoon_itinerary_v1')) || defaultItineraryData;
+
         const checklistData = [
             {
                 id: "common",
@@ -871,7 +935,6 @@
             { cat: "機票", item: "長榮 吉隆坡 -> 台灣", junan: 13949, yuyun: 0 },
             { cat: "度假村", item: "莫凡比 + 過境旅館 (升級AI+1萬)", junan: 60000, yuyun: 141000 },
             { cat: "酒店", item: "新加坡 (全季酒店-3晚)", junan: 13777, yuyun: 0 },
-            { cat: "酒店", item: "吉隆坡 (2晚)", junan: 0, yuyun: 0 },
             { cat: "交通", item: "送機專車: 新埔 -> 桃園2航", junan: 1496, yuyun: 0 },
             { cat: "交通", item: "接機專車: 桃機2航 -> 新埔", junan: 1430, yuyun: 0 },
             { cat: "交通", item: "星/馬 機場飯店接送 (共4趟)", junan: 0, yuyun: 4085 },
@@ -1330,6 +1393,136 @@
                     `<a href="${url}" target="_blank" class="block truncate text-blue-600 hover:underline"><i class="fa-solid fa-link mr-1 text-xs"></i>${url}</a>`
                 ).join('');
             } else memoLinks.innerHTML = '';
+        }
+
+        // --- Itinerary Edit Logic ---
+        let currentEditDayIndex = 0;
+        let editingItemIndex = -1;
+
+        function openItineraryModal() {
+            const modal = document.getElementById('edit-itinerary-modal');
+            const select = document.getElementById('edit-day-select');
+            
+            // Populate day select
+            select.innerHTML = itineraryData.map((day, index) => 
+                `<option value="${index}">${day.day} ${day.date}</option>`
+            ).join('');
+            
+            select.value = currentEditDayIndex;
+            renderEditItems();
+            
+            modal.classList.remove('hidden');
+        }
+
+        function closeItineraryModal() {
+            document.getElementById('edit-itinerary-modal').classList.add('hidden');
+            cancelEditItem();
+        }
+
+        function renderEditItems() {
+            const select = document.getElementById('edit-day-select');
+            currentEditDayIndex = parseInt(select.value);
+            const items = itineraryData[currentEditDayIndex].timeline;
+            const listContainer = document.getElementById('edit-items-list');
+            
+            listContainer.innerHTML = items.map((item, index) => `
+                <div class="bg-gray-50 border border-gray-200 rounded p-2 flex justify-between items-center">
+                    <div class="flex-1 overflow-hidden mr-2">
+                        <div class="text-xs font-bold text-gray-500">${item.time}</div>
+                        <div class="text-sm font-bold text-gray-800 truncate">${item.title}</div>
+                    </div>
+                    <div class="flex gap-1 shrink-0">
+                        <button onclick="editItineraryItem(${index})" class="text-blue-500 hover:text-blue-700 p-1"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteItineraryItem(${index})" class="text-red-500 hover:text-red-700 p-1"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Hide form when switching days
+            document.getElementById('edit-item-form').classList.add('hidden');
+        }
+
+        function editItineraryItem(index) {
+            editingItemIndex = index;
+            const item = itineraryData[currentEditDayIndex].timeline[index];
+            
+            document.getElementById('edit-form-time').value = item.time || '';
+            document.getElementById('edit-form-title').value = item.title || '';
+            document.getElementById('edit-form-desc').value = (item.desc || '').replace(/<br>/g, '\n');
+            document.getElementById('edit-form-link').value = item.link || '';
+            document.getElementById('edit-form-map').value = item.map || '';
+            document.getElementById('edit-form-traffic').value = item.traffic || '';
+            
+            document.getElementById('edit-item-form').classList.remove('hidden');
+            document.getElementById('edit-items-list').classList.add('hidden');
+        }
+
+        function addNewItineraryItem() {
+            editingItemIndex = -1; // New item
+            document.getElementById('edit-form-time').value = '';
+            document.getElementById('edit-form-title').value = '';
+            document.getElementById('edit-form-desc').value = '';
+            document.getElementById('edit-form-link').value = '';
+            document.getElementById('edit-form-map').value = '';
+            document.getElementById('edit-form-traffic').value = '';
+            
+            document.getElementById('edit-item-form').classList.remove('hidden');
+            document.getElementById('edit-items-list').classList.add('hidden');
+        }
+
+        function cancelEditItem() {
+            document.getElementById('edit-item-form').classList.add('hidden');
+            document.getElementById('edit-items-list').classList.remove('hidden');
+            editingItemIndex = -1;
+        }
+
+        function saveEditItem() {
+            const time = document.getElementById('edit-form-time').value;
+            const title = document.getElementById('edit-form-title').value;
+            const desc = document.getElementById('edit-form-desc').value.replace(/\n/g, '<br>');
+            const link = document.getElementById('edit-form-link').value;
+            const map = document.getElementById('edit-form-map').value;
+            const traffic = document.getElementById('edit-form-traffic').value;
+            
+            if (!title) {
+                alert('請輸入標題');
+                return;
+            }
+
+            const newItem = { time, title, desc, link, map, traffic };
+            
+            // Remove empty keys
+            Object.keys(newItem).forEach(key => !newItem[key] && delete newItem[key]);
+
+            if (editingItemIndex > -1) {
+                // Update
+                itineraryData[currentEditDayIndex].timeline[editingItemIndex] = {
+                    ...itineraryData[currentEditDayIndex].timeline[editingItemIndex],
+                    ...newItem
+                };
+            } else {
+                // Add
+                itineraryData[currentEditDayIndex].timeline.push(newItem);
+                // Sort by time is tricky with strings like "Morning", so we append to end by default
+            }
+            
+            saveItinerary();
+            cancelEditItem();
+            renderEditItems();
+            renderItinerary(); // Update main view
+        }
+
+        function deleteItineraryItem(index) {
+            if(confirm('確定要刪除此行程嗎？')) {
+                itineraryData[currentEditDayIndex].timeline.splice(index, 1);
+                saveItinerary();
+                renderEditItems();
+                renderItinerary();
+            }
+        }
+
+        function saveItinerary() {
+            localStorage.setItem('honeymoon_itinerary_v1', JSON.stringify(itineraryData));
         }
 
         window.addEventListener('DOMContentLoaded', () => {
